@@ -1,0 +1,105 @@
+{% load userinfo %}
+
+<link rel="stylesheet" href="/static/css/mycss/userModal.css">
+{% with user=request.session.username|getInfo %}
+<div class="modal-header">
+    <p class="modal-title text-center">{{user.username}}：用户信息</p>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body text-center">
+    <div class="text-center" id="userModal">
+
+        <form class="form-userinfo">
+            {%csrf_token%}
+            <label for="avatar-select"><img class="mb-4 ml-4" id="user-avatar" src="{{user.avatar}}" width="80" height="76"></label>
+            <input  type="file"  name="user-avatar" formenctype="multipart/form-data" class="d-none" id="avatar-select" accept="image/*">
+            <label for="inputNickname" class="sr-only">nickname</label>
+            <input type="text" id="inputNickname" class="form-control mb-2 text-dark" placeholder="昵称" name="nickname" required value="{{user.nickname}}"
+                   autofocus>
+            <label for="inputGender" class="sr-only">Gender</label>
+            <input id="gender" value="{{user.gender}}" class="d-none">
+            <select id="inputGender" class="form-control mb-2" name="gender">
+                <option value="1" class="text-info">♂</option>
+                <option value="2" class="text-danger">♀</option>
+                <option value="0" >👽</option>
+            </select>
+            <label for="inputPresentation" class="sr-only">Presentation</label>
+            {% if user.presentation %}
+                <input type="text" id="inputPresentation" class="form-control text-dark" placeholder="个人说明" name="presentation"  value="{{user.presentation}}"
+                   required>
+                {%else%}
+                    <input type="text" id="inputPresentation" class="form-control text-dark" placeholder="个人说明" name="presentation"
+                   required>
+            {% endif %}
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+            <button type="button" class="btn btn-primary" id="subButton">提交</button>
+        </form>
+        {% endwith %}
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-dark" id="changeStatus">退出登录</button>
+</div>
+
+
+<script>
+    $(function(){
+        infoSubmit();
+        renderInfo();
+    })
+
+    function infoSubmit(){
+        $('#subButton').click(function(){
+            if($('#inputNickname').val()){
+                var form = new FormData();
+                avatar=$('#avatar-select')[0].files[0];
+                form.append('nickname',$('#inputNickname').val());
+                form.append('gender',$('#inputGender').val());
+                form.append('presentation',$('#inputPresentation').val());
+                form.append('avatar',avatar);
+                $.ajax({
+                headers: {"X-CSRFToken":$.cookie("csrftoken")},
+                url:'/edit_info/',
+                type:'POST',
+                data: form,
+                dataType:'json',
+                processData: false,
+                contentType: false,
+                success:function(arg){
+                    if(arg.status){
+                        alert(arg.msg);
+                        location.reload();
+                    }
+                    else{
+                        alert(arg.msg);
+                    }
+                }
+            })
+            }
+            }
+        )
+    }
+
+    function renderInfo(){
+        $('#inputGender').children().each(function(){
+            if($(this).val()==$('#gender').val()){
+                    $(this).attr('selected','selected');
+                }
+        })
+        $('#avatar-select').change(function(){
+            var file = document.getElementById("avatar-select").files[0];
+            var reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload=function(e){
+                var img=$("#user-avatar");
+                img.attr('src',this.result);
+            }
+
+        })
+
+        }
+
+
+</script>

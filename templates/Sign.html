@@ -1,0 +1,50 @@
+
+
+<link rel="stylesheet" href="/static/css/mycss/signModal.css">
+
+<div class="text-center" id="userModal">
+<form class="form-signin">
+    {%csrf_token%}
+    <img class="mb-4 ml-4" src="/static/image/HP.jpg" alt="" width="80" height="76">
+    <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+    <label for="inputUsername" class="sr-only">Username</label>
+    <input type="text" id="inputUsername" class="form-control" placeholder="用户名" name="username" required autofocus>
+    <label for="inputPassword" class="sr-only">Password</label>
+    <input type="password" id="inputPassword" class="form-control mb-0" placeholder="密码" name="password" required>
+    <a style="float:right;" href="#" class="small mb-3">忘记登录密码?</a>
+    <button type="button" class="btn btn-lg btn-primary btn-block" id="signButton">Sign in</button>
+    <p  class="mt-3 text-right small">还没账号?<a href="/register/">注册一个</a></p>
+    <p class="text-danger lead" id="signError">{{error}}</p>
+    <p class="mt-2 mb-3 text-muted">&copy; 2017-8012</p>
+</form>
+
+<script>
+    $(function(){
+        signSubmit();
+    })
+
+    function signSubmit(){
+        $('#signButton').click(function(){
+            if($('#inputUsername').val()&&$('#inputPassword').val()){
+                $.ajax({
+                headers: {"X-CSRFToken":$.cookie("csrftoken")},
+                url:'/sign/',
+                type:'POST',
+                data:$('.form-signin').serialize(),
+                dataType:'json',
+                success:function(arg){
+                    if(arg.status){
+                        alert(arg.msg);
+                        location.reload();
+                    }
+                    else{
+                        $('#signError').text(arg.msg);
+                    }
+                }
+            })
+            }
+            }
+            )
+    }
+</script>
+</div>

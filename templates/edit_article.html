@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/font/css/all.css">
+</head>
+<body>
+<input id="title" type="text" class="form-control" value="{{article_info.title}}">
+<div id="content">
+    {{article_info.article_detail.content|safe}}
+</div>
+<div class="d-flex justify-content-center">
+    <button id="edit_article" type="button" class="btn btn-primary btn-lg btn-block"
+            style="max-width:25em;margin-top:20px;">提交
+    </button>
+    <select id="category_id">
+        {% for item in category %}
+        {% if item.id == article_info.category_id %}
+        <option value="{{item.id}}" selected="selected">{{item.name}}</option>
+        {% else %}
+        <option value="{{item.id}}">{{item.name}}</option>
+        {% endif %}
+        {% endfor %}
+    </select>
+</div>
+<div>
+    <table class="table table-hover table-light">
+        <tr>
+            <th>赞我的人</th>
+            <th>时间</th>
+        </tr>
+        {% for item in like_user %}
+        <tr>
+            <td>{{item.user.username}}</td>
+            <td>{{item.create_time}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+<div>
+    <table class="table table-hover table-light">
+        <tr>
+            <th>ID</th>
+            <th>评论的人</th>
+            <th>评论内容</th>
+            <th>评论时间</th>
+            <th>操作&nbsp;&nbsp;&nbsp;<i class="fas fa-plus btn"></i></th>
+        </tr>
+        {% for item in article_info.comments.all %}
+        <tr>
+            <td class="commentId">{{item.id}}</td>
+            <td>{{item.user.username}}</td>
+            <td>{{item.content}}</td>
+            <td>{{item.create_time}}</td>
+            <td>
+                <i class="fas fa-eraser btn btn-del" data-toggle="modal" data-target="#delModal"></i>&nbsp;
+                <a class="fas fa-comment-dots disabled"></a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+<div class="modal fade" id="delModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                确认删除？
+                <input type="text" id="del_id" class="d-none">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary delSub">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<p><a class="btn btn-dark float-right" style="position:relative; right:20px;" href="/backend/" >返回</a></p>
+</body>
+<script src="/static/js/jquery-3.3.1.min.js"></script>
+<script src="/static/js/wangEditor.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/popper.min.js"></script>
+<SCRIPT SRC="/static/js/jquery.cookie.js"></SCRIPT>
+<script>
+        $(function(){
+
+        //初始化编辑器
+        var E = window.wangEditor;
+        var editor = new E('#content');
+
+        editor.customConfig.uploadImgHeaders = {
+            "X-CSRFToken":$.cookie("csrftoken")
+        }
+        editor.customConfig.uploadImgServer = '/backend/media/'
+        editor.customConfig.debug = location.href.indexOf('wangeditor_debug_mode=1') > 0
+        editor.customConfig.uploadImgHooks = {
+            customInsert: function (insertImg, result, editor) {
+                    var url =result.data;
+                    console.log(url);
+                    insertImg(url);
+                }
+        }
+        editor.create();
+        edit_article(editor);
+        deleteInfo();
+        })
+    function deleteInfo(){
+        $('.btn-del').click(function(){
+            $('#del_id').val($(this).parent().prevAll('.commentId').text());
+        })
+        $('.delSub').click(function(){
+            $.ajax({
+                    url:'/backend/delArticle/',
+                    type:'POST',
+                    headers: {"X-CSRFToken":$.cookie("csrftoken")},
+                    data:{'id':$('#del_id').val(),'type':'Comment'},
+                    dataType:'json',
+                    success:function(arg){
+                        if(arg.status){
+                            location.reload();
+                        }
+                        else{
+                            alert(arg.msg);
+                        }
+                    }
+            })
+        })
+    }
+        function edit_article(editor){
+        document.getElementById('edit_article').addEventListener('click', function () {
+        $.ajax({
+            headers:{ "X-CSRFtoken":$.cookie("csrftoken")},
+            url:'/backend/edit_article/',
+            type:'POST',
+            data:{'title':$('#title').val(), 'content':editor.txt.html(),'brief':editor.txt.text().split("&nbsp;").join("").slice(0,252), 'category_id':$('#category_id').val(),'id':{{article_info.id|safe }}},
+            dataType:'json',
+            success:function(arg){
+                if(arg.status){
+                    location.href='/backend/';
+                }
+                else{
+                    alert(arg.msg);
+                }
+            }
+        })
+        }, false)
+        }
+
+
+
+</script>

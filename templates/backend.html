@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/static/css/bootstrap.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/font/css/all.css">
+</head>
+<style>
+
+table td p{
+    overflow : hidden;
+text-overflow: ellipsis;
+display: -webkit-box;
+-webkit-line-clamp: 2;
+-webkit-box-orient: vertical;
+}
+
+
+
+
+</style>
+<body>
+<nav class="navbar navbar-expand-md navbar-light bg-light">
+    <a class="navbar-brand" href="/">肖浪哥</a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+            <li class="nav-item active">
+                <a class="nav-link" href="/backend/">文章 <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/backend/message/">留言板</a>
+            </li>
+
+        </ul>
+        <a href="/backend/add_article/" class="fas fa-plus btn float-right text-dark"></a>
+    </div>
+</nav>
+
+<div>
+    {% block html %}
+        <table class="table table-hover table-light">
+        <form id="sort_form" action="/backend/sort_article/" method="POST">
+            {% csrf_token %}
+            <input name="sort" id="sort" type="text" class="d-none" value="{{sort}}">
+            <input name="sort-way" id="sort-way" type="text" class="d-none" value="{{sort_way}}">
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">标题</th>
+            <th scope="col" class="d-none d-lg-block" id="brief_header">梗概</th>
+            <th scope="col" id="browse-sort">浏览&nbsp;
+                <i class="fas fa-sort-up d-none text-danger"></i>
+                <i style="position:relative;" class="fas fa-sort-down d-none text-danger"></i></th>
+            <th scope="col" id="like-sort">点赞&nbsp;
+                <i class="fas fa-sort-up d-none text-danger"></i>
+                <i style="position:relative;" class="fas fa-sort-down d-none text-danger"></i>
+      </th>
+            <th scope="col" id="comment-sort">评论&nbsp;
+               <i class="fas fa-sort-up d-none text-danger"></i>
+                <i class="fas fa-sort-down d-none text-danger"></i></th>
+            <th scope="col" id="create_time-sort">时间&nbsp;
+                <i class="fas fa-sort-up d-none text-danger"></i>
+                <i  class="fas fa-sort-down d-none text-danger"></i></th>
+            <th scope="col" id="category_sort">
+                    <select name="category_id" class="bg-light border-light">
+                        {% if category_id == 0 %}
+                        <option value="0" selected>所有分类</option>
+                        {%else%}
+                        <option value="0">所有分类</option>
+                        {%endif%}
+                        {% for item in category %}
+                        {% if item.id == category_id %}
+                        <option value="{{category_id}}" selected="selected">{{item.name}}</option>
+                        {% else %}
+                        <option value="{{item.id}}">{{item.name}}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+
+            </th>
+            <th scope="col">
+                操作
+            </th>
+        </tr>
+            </form>
+        {% for item in article_list%}
+        <tr class="data">
+            <td scope="row" class="article_id">{{item.id}}</td>
+            <td class="article_title">{{item.title}}</td>
+            <td style="max-width:400px;" class="d-none d-lg-block article_brief"><p>{{item.brief}}</p></td>
+            <td class="article_browse">{{item.browse}}</td>
+            <td class="article_like">{{item.like}}</td>
+            <td class="article_comment">{{item.comments.all.count}}</td>
+            <td class="article_time">{{item.create_time|date:"Y-m-d H:i:s"}}</td>
+            <td class="{{item.category_id}}">{{item.category.name}}</td>
+            <td><i class="fas fa-eraser btn btn-light btn-sm btn-del" data-toggle="modal" data-target="#delModal"></i>
+                <a href="/backend/edit_article?id={{item.id}}&cid={{item.category_id}}"
+                   class="btn btn-light btn-sm btn-edit"><i
+                        class="fas fa-edit"></i></a></td>
+        </tr>
+        {% endfor %}
+    </table>
+    <div class="modal fade" id="delModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-center">
+        确认删除？
+        <input type="text" id="del_id" class="d-none">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary delSub">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+    {% endblock %}
+</div>
+<a href="/">点我</a>
+<script src="/static/js/jquery-3.3.1.min.js"></script>
+<script src="/static/js/popper.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<SCRIPT SRC="/static/js/jquery.cookie.js"></SCRIPT>
+<script>
+    $(function(){
+        cornerRender();
+        deleteInfo();
+        sortArticle();
+            $('#test').click(function(){
+                alert($('div').attr('class'));
+            })
+
+    })
+    function deleteInfo(){
+        $('.btn-del').click(function(){
+            $('#del_id').val($(this).parent().prevAll('.article_id').text());
+        })
+        $('.delSub').click(function(){
+            $.ajax({
+                    url:'/backend/delArticle/',
+                    type:'POST',
+                    headers: {"X-CSRFToken":$.cookie("csrftoken")},
+                    data:{'id':$('#del_id').val(),'type':'Article'},
+                    dataType:'json',
+                    success:function(arg){
+                        if(arg.status){
+                            location.reload();
+                        }
+                        else{
+                            alert(arg.msg);
+                        }
+                    }
+            })
+        })
+    }
+    function show_corner(tag){
+            $('#sort').val(tag.attr('id'))
+
+            if(tag.hasClass('active')){
+               tag.children().toggleClass('d-none');
+            }
+            else{
+                tag.children('.fa-sort-up').removeClass('d-none');
+                tag.addClass('active');
+            }
+
+            $('#sort-way').val(tag.children().not('.d-none').attr('class'));
+            $('form').submit();
+    }
+
+    function cornerRender(){
+        if($('#sort-way').val()){
+            $('#{{sort|safe}}').addClass('active');
+            $('#{{sort|safe}}').children('.{{sortWay|safe}}').removeClass('d-none');
+        }
+    }
+
+    function sortArticle(){
+        $('select[name="category_id"]').change(function(){
+            $('#sort_form').submit();
+        })
+
+        $('#brief_header').nextUntil('#category_sort').click(function(){
+            show_corner($(this));
+            <!--render_data();-->
+        })
+    }
+
+
+</script>
+{%block js%}
+{%endblock%}
+</body>
+
+</html>

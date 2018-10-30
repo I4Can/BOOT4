@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+
+{% block css%}
+<style>
+
+
+
+</style>
+{% endblock %}
+{% block left %}
+<div class="card mb-3 bg-light">
+    <div class="card-body">
+        <h5 class="card-title text-center">{{article_info.title}}</h5>
+        <p class="card-text">{{article_info.article_detail.content|safe}}</p>
+    </div>
+</div>
+<div class="card  text-center mb-3">
+    <div class="card-body">
+        <b class="text-info">发表评论</b>
+        <HR color="#5F9EA0"/>
+        <form class="mt-4" action="/receive_comment/" method="POST">
+            {% csrf_token %}
+            <div class="form-row mb-2">
+                <textarea name="content" class="col-12 mt-4" placeholder="写点什么" style="min-height:100px;"
+                          required></textarea>
+            </div>
+            <p class="text-left"><i class="far fa-grin-alt" style="font-size:25px;"></i></p>
+            <input name="article_id" value="{{article_info.id}}" style="display:none;">
+            <button type="submit" class="btn btn-primary sendReply">发表</button>
+        </form>
+    </div>
+</div>
+
+<div><span>{{pre_article.title}}</span><span>{{nex_article.title}}</span></div>
+<input id="path" type="text" value="blog" style="display:none;">
+
+{% if  message_list %}
+{% include "reply.html"%}
+<nav aria-label="Page navigation example" style="margin-top:10px;">
+    <ul class="pagination">
+        {{page_info.pager|safe}}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}
+{% block js%}
+<script>
+
+
+</script>
+{% endblock %}

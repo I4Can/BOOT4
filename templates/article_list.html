@@ -1,0 +1,48 @@
+    <style>
+
+    </style>
+    <div id="pagerModel" class=" mt-3">
+        {% for item in article_list %}
+            <div class="article card container mb-2 ">
+            <div class="row" >
+                {% if item.illustration%}
+                <div class="col-sm-4 image">
+                    <a href="/blog/{{item.id}}.html"><img src="{{item.illustration}}"
+                                                                             style="height:100%;width:100%;"></a>
+                </div>
+                <div class="col-sm-8 card-body">{%else%}<div class="col-sm card-body">{%endif%}
+                    <h4 class="card-title" style="font-weight:350;"><a
+                                                                       href="/blog/{{item.id}}.html">{{item.title}}</a>
+                    </h4>
+                    {% if item.title%}
+                    <hr class="mt-0 mb-0" >
+                    {% endif %}
+                    <p class="card-text lead article-text"><a href="/blog/{{item.id}}.html">{{item.brief}}</a>
+                    </p>
+                    <span class="mt-1 small float-left"><i class="fa fa-eye" style="font-size:13px;"></i>&nbsp;浏览{{item.browse}}</span>
+                    <div class="art-info d-flex float-right">
+
+                        <span class="ml-3 d-none d-sm-inline"><i
+                                class="fas fa-calendar-alt">&nbsp;{{item.create_time|date:"Y-m-d H:i:s"}}</i></span>
+
+                        {% if item.id in ids%}
+                            <span id="article_{{item.id}}" class="ml-3"x`><i class="fas fa-thumbs-up text-info">&nbsp;{{item.like}}</i></span>
+                        {% else %}
+                            <span id="article_{{item.id}}" class="ml-3"><i class="fas fa-thumbs-up">&nbsp;{{item.like}}</i></span>
+                        {% endif %}
+                        <span class="ml-3"><i class="fas fa-comment-dots">&nbsp;评论({{item.comments.all.count}})</i></span>
+                        <span class="ml-3 d-none d-md-inline "><a class="btn btn-sm btn-outline-dark"
+                                                                 href="/blog/{{item.id}}.html">阅读全文</a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+
+<nav aria-label="Page navigation" style="margin-top:10px;">
+    <ul class="pagination">
+        {{page_info.pager|safe}}
+    </ul>
+</nav>

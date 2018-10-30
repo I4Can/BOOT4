@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    注册成功，三秒后跳转到主页面,已自动登录
+    <p class="text-center">若没有自动跳转请点击以下链接<a href="/">127.0.0.1:8000</a></p>
+</head>
+<body>
+</body>
+<script>
+    window.setTimeout(function(){
+        location.href='/sign/';
+    }, 3000);
+</script>
+</html>

@@ -1,0 +1,93 @@
+{% extends "layout.html"%}
+{% block css %}
+<style>
+.avatar{
+    width:60px;
+    height:60px;
+    margin:10px 10px 0 10px;
+}
+          ul{
+            list-style:none;
+            padding-left:0;
+          }
+    @media (max-width: 768px) {
+        .avatar{
+            width:45px;
+            height:45px;
+            margin:5px 5px 0 5px;
+        }
+    }
+</style>
+{% endblock %}
+{% block left%}
+<div class="card  text-center mb-3">
+    <div class="card-body">
+        <b class="text-info">留言公约</b>
+
+        <div class="card-body mt-2" style="border-top:#5F9EA0 solid 1px;">
+            <p class="text-danger">1.一切以博主为中心</p>
+            <p class="text-dznger">2.言行上要赞美博主</p>
+            <p class="text-danger">3.行动上要拥护博主</p>
+            <p class="text-danger">4.思想上要靠拢博主</p>
+            <p class="text-info">5.以上纯属扯淡</p>
+            <p class="text-warning">6.禁止传播不良信息</p>
+        </div>
+    </div>
+</div>
+<div class="card  text-center mb-3">
+    <div class="card-body">
+        <b class="text-info">发表评论</b>
+        <form class="mt-2" action="/receive_comment/" method="POST">
+            {% csrf_token %}
+            <div class="form-row mb-2">
+                <textarea name="content" class="col-12 mt-4" placeholder="写点什么" style="min-height:100px;"
+                          required></textarea>
+            </div>
+
+            <p class="text-left"><i class="far fa-grin-alt" style="font-size:25px;"></i></p>
+            <button type="submit" class="btn btn-primary sendReply">发表</button>
+        </form>
+    </div>
+</div>
+<input id="path" type="text" value="message" style="display:none;">
+{% if  message_list %}
+{% include "reply.html"%}
+
+<nav aria-label="Page navigation example" style="margin-top:10px;">
+    <ul class="pagination">
+        {{page_info.pager|safe}}
+    </ul>
+</nav>
+{% endif %}
+
+<!-- Modal -->
+<div class="modal fade" id="chat" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close
+                </button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js%}
+
+<script>
+
+
+</script>
+{% endblock %}
