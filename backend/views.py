@@ -43,15 +43,16 @@ def delArticle(request):
         ret = {'status': True, 'msg': None}
         if request.method == 'POST':
             try:
-                id = request.POST.get('id')
+                ids = request.POST.get('id').split('/')[:-1]
                 table=request.POST.get('type')
-                if table=='Article':
-                    models.Article.objects.filter(id=id).first().delete()
-                elif table=='Comment':
-                    models.Comment.objects.filter(id=id).first().delete()
-
-                elif table=='Message':
-                    models.Message.objects.filter(id=id).first().delete()
+                print(table,555)
+                for id in ids:
+                    if 'edit_article' in table:
+                        models.Comment.objects.filter(id=id).first().delete()
+                    elif 'message' in table:
+                        models.Message.objects.filter(id=id).first().delete()
+                    else:
+                        models.Article.objects.filter(id=id).first().delete()
             except Exception as e:
                 ret['status'] = False
                 ret['msg'] = str(e)

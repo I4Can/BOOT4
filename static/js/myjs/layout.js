@@ -14,16 +14,15 @@ function about (){
        function cLike(status){
             $('.fa-thumbs-up').click(function(){
                 if(status){
-                    alert(1323);
                     $(this).toggleClass('text-info');
                     $.ajax({
                     headers: {"X-CSRFToken":$.cookie("csrftoken")},
                     url:'/like/',
                     type:'POST',
+                    dataType'json',
                     data:{'article_id':$(this).parent().attr('id'),'path':$('#path').val()},
-                    success:function(){
-                        alert(65156)
-                        location.reload();
+                    success:function(arg){
+                        $(this).text(arg.like);
                     }
                     })
                 }

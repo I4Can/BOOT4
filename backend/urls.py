@@ -6,7 +6,6 @@ urlpatterns=[
     path('add_article/',add_article),
     path('edit_article/',edit_article),
     path('sort_article/',sort_Article),
-    path('test/',test),
     path('message/',message),
     path('media/',media),
 ]

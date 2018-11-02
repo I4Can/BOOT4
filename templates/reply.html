@@ -4,6 +4,7 @@
         background:aliceblue;
     }
 
+
 </style>
 <div id="pagerModel" class="card  mb-3">
 
@@ -34,7 +35,7 @@
                                     {% if comment.reply %}
                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
                                         class="text-primary">{{comment.user.nickname}}</span>
-                                    回复<span class="text-secondary">{{comment.reply.user.nickname}}:</span>
+                                    回复<span class="text-secondary">{{comment.reply.user.nickname}}：</span>
                                     <input type="text" class="d-none" value="{{comment.id}}">
                                     {% endif %}
 
@@ -63,23 +64,31 @@
         </ul>
     </div>
 </div>
+<div class="content col-11 text-dark float-right pl-0 mb-2 reply_template d-none">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-primary"></span>
+    回复<span class="text-secondary"></span>：
+    <input type="text" class="d-none" value="{{comment.id}}">
+    <span class="small float-right time d-none">{{comment.create_time|date:"Y-m-d H:i:s"}}</span>
+</div>
+
 
 <div id="reply-form" class="d-none">
 
     <div>
         <hr width="90%" class="float-right bg-info">
     </div>
-    <form action="/receive_comment/" method="POST" class="float-right" style="width:100%;">
+    <form id="reply_form" class="float-right" style="width:100%;">
         {% csrf_token %}
         <input id="article_id" name="article_id" value="{{article_info.id}}" style="display:none">
         <input id="reply_id" name="reply_id" type="text" style="display:none">
         <div class="form-row mb-2 mr-1 justify-content-end">
-                                <textarea name="content" placeholder="写点什么" class="form-control" autofocus
+                                <textarea id="reply_content" name="content" placeholder="写点什么" class="form-control"
+                                          autofocus
                                           style="min-height:100px;width:89%;float-right;" required></textarea>
             <span class="float-right mt-2" style="width:89%;"><i class="far fa-grin-alt"
                                                                  style="font-size:25px;"></i>
 
-                <button type="submit" class="btn btn-primary btn-sm float-right sendReply">发表</button></span>
+                <button id="send_reply" type="button" class="btn btn-primary btn-sm float-right">发表</button></span>
         </div>
     </form>
 </div>
@@ -106,6 +115,20 @@
             },
         )
     }
+
+
+
+    $('.sendReply').click(function(){
+        if(status){
+            return true;
+        }
+        else{
+            $('#makeLogin').modal('show');
+            return false;
+        }
+    })
+
+
 
 
 </script>

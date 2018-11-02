@@ -40,11 +40,32 @@ display: -webkit-box;
             </li>
 
         </ul>
+        <button id="batch" type="button" class="btn btn-secondary btn-sm">批量操作</button>
+        <button id="batch_confirm" type="button" data-toggle="modal" data-target="#delModal" class="btn btn-danger btn-sm d-none" disabled>确定</button>
         <a href="/backend/add_article/" class="fas fa-plus btn float-right text-dark"></a>
     </div>
 </nav>
 
 <div>
+    <div class="modal fade" id="delModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close operate-close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-center">
+        确认删除？
+        <input type="text" id="del_id" class="d-none">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary operate-close" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary delSub">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
     {% block html %}
         <table class="table table-hover table-light">
         <form id="sort_form" action="/backend/sort_article/" method="POST">
@@ -100,59 +121,77 @@ display: -webkit-box;
             <td class="article_comment">{{item.comments.all.count}}</td>
             <td class="article_time">{{item.create_time|date:"Y-m-d H:i:s"}}</td>
             <td class="{{item.category_id}}">{{item.category.name}}</td>
-            <td><i class="fas fa-eraser btn btn-light btn-sm btn-del" data-toggle="modal" data-target="#delModal"></i>
+            <td><input type="checkbox" class="batch-box d-none" value="{{item.id}}">
+                <i class="fas fa-eraser btn btn-light btn-sm btn-del" data-toggle="modal" data-target="#delModal"></i>
                 <a href="/backend/edit_article?id={{item.id}}&cid={{item.category_id}}"
                    class="btn btn-light btn-sm btn-edit"><i
                         class="fas fa-edit"></i></a></td>
         </tr>
         {% endfor %}
     </table>
-    <div class="modal fade" id="delModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body text-center">
-        确认删除？
-        <input type="text" id="del_id" class="d-none">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-        <button type="button" class="btn btn-primary delSub">确认</button>
-      </div>
-    </div>
-  </div>
-</div>
     {% endblock %}
 </div>
-<a href="/">点我</a>
 <script src="/static/js/jquery-3.3.1.min.js"></script>
 <script src="/static/js/popper.min.js"></script>
 <script src="/static/js/bootstrap.min.js"></script>
 <SCRIPT SRC="/static/js/jquery.cookie.js"></SCRIPT>
+
+{%block js%}
+{%endblock%}
 <script>
     $(function(){
         cornerRender();
         deleteInfo();
         sortArticle();
-            $('#test').click(function(){
-                alert($('div').attr('class'));
-            })
-
+        batch();
     })
+    function batch(){
+        $('#batch').click(function(){
+            $('input[type="checkbox"]').toggleClass('d-none');
+            $(this).toggleClass('btn-warning');
+            $(this).next().toggleClass('d-none');
+        })
+
+        $('input[type="checkbox"]').change(function(){
+            var flag=0;
+            $('input[type="checkbox"]').each(function(){
+                if($(this).is(':checked')){
+                    $('#batch_confirm').removeAttr('disabled');
+                    flag=1;
+                    return;
+                }
+            })
+            if(!flag){
+                $('#batch_confirm').attr('disabled','disabled');
+            }
+            var past_val=$('#del_id').val();
+            var current_val=$(this).val();
+            if(past_val.search(current_val)!=-1){
+                $('#del_id').val(past_val.replace(current_val+'/',''));
+            }
+            else{
+                $('#del_id').val(past_val+current_val+"/");
+            }
+        })
+
+
+    }
+
     function deleteInfo(){
         $('.btn-del').click(function(){
-            $('#del_id').val($(this).parent().prevAll('.article_id').text());
+            $('#del_id').val($(this).prev().val()+'/');
+        })
+
+    $('.operate-close').click(function(){
+            $('#del_id').val('');
+            $(".batch-box").prop("checked",false);
         })
         $('.delSub').click(function(){
             $.ajax({
                     url:'/backend/delArticle/',
                     type:'POST',
                     headers: {"X-CSRFToken":$.cookie("csrftoken")},
-                    data:{'id':$('#del_id').val(),'type':'Article'},
+                    data:{'id':$('#del_id').val(),'type':document.URL},
                     dataType:'json',
                     success:function(arg){
                         if(arg.status){
@@ -167,7 +206,6 @@ display: -webkit-box;
     }
     function show_corner(tag){
             $('#sort').val(tag.attr('id'))
-
             if(tag.hasClass('active')){
                tag.children().toggleClass('d-none');
             }
@@ -197,11 +235,7 @@ display: -webkit-box;
             <!--render_data();-->
         })
     }
-
-
 </script>
-{%block js%}
-{%endblock%}
-</body>
 
+</body>
 </html>

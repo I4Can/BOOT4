@@ -39,6 +39,5 @@ urlpatterns = [
     path('status/',views.status),
     path('backend/',include("backend.urls")),
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': 'media'}),
-    path('test/',test),
     path('edit_info/',edit_info),
 ]

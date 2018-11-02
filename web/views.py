@@ -3,7 +3,7 @@ from utils import pager,visit,tree
 from django.db.models import F
 from django.shortcuts import render,HttpResponse,redirect
 import json
-
+from datetime import datetime
 
 def sign(request):
     if request.method=='GET':
@@ -15,7 +15,7 @@ def sign(request):
             password = request.POST.get('password')
             obj = models.userInfo.objects.filter(username=username, password=password).first()
             if obj:
-                request.session.clear()
+                request.session.flush()
                 request.session['username'] = obj.username
                 request.session['user_id'] = obj.id
                 request.session.set_expiry(60 * 60 * 24 * 30)
@@ -135,7 +135,7 @@ def about(request):
 
 
 def like(request):
-    if request=='POST':
+    if request.method=='POST':
         try:
             user_id = request.session.get('user_id')
             if user_id:
@@ -159,6 +159,7 @@ def like(request):
                     obj = models.Comment.objects.filter(id=article_id)
                     num = obj.first().userinfo_set.all().count()
                     obj.update(like=num)
+
                 else:
                     current=models.UserArticle.objects.filter(article_id=article_id, user_id=user_id).first()
                     if current:
@@ -172,7 +173,7 @@ def like(request):
                 return HttpResponse("未登录")
         except Exception as e:
             return HttpResponse(json.dumps(str(e)))
-        return HttpResponse("OK")
+        return HttpResponse(json.dumps({'like':num}))
     else:
         return HttpResponse("404")
 
@@ -186,14 +187,19 @@ def receive_comment(request):
             content = request.POST.get('content')
             user_id = request.session.get('user_id')
             if (article_id):
-                models.Comment.objects.create(content=content, user_id=user_id, reply_id=reply_id, article_id=article_id)
+                obj=models.Comment.objects.create(content=content, user_id=user_id, reply_id=reply_id, article_id=article_id)
                 models.Article.objects.filter(id=article_id).update(comment=F('comment') + 1)
-                return redirect('/blog/' + article_id + '.html#pagerModel')
             else:
-                models.Message.objects.create(content=content, user_id=user_id, reply_id=reply_id)
-                return redirect('/message#pagerModel')
+                obj=models.Message.objects.create(content=content, user_id=user_id, reply_id=reply_id)
+            id=obj.id
+            create_time = obj.create_time.strftime('%Y-%m-%d %H:%M:%S')
+            nickname=obj.user.nickname
+            reply_nickname=obj.reply.user.nickname
+            result={'id':id, 'nickname':nickname,'create_time':create_time,'reply_nickname':reply_nickname}
         except Exception as e:
+            print(str(e))
             return HttpResponse(json.dumps(str(e)))
+        return HttpResponse(json.dumps(result))
     else:
         return HttpResponse("404")
 

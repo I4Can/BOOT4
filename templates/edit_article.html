@@ -121,7 +121,7 @@
                     url:'/backend/delArticle/',
                     type:'POST',
                     headers: {"X-CSRFToken":$.cookie("csrftoken")},
-                    data:{'id':$('#del_id').val(),'type':'Comment'},
+                    data:{'id':$('#del_id').val(),'type':document.URL},
                     dataType:'json',
                     success:function(arg){
                         if(arg.status){
