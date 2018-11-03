@@ -187,17 +187,20 @@ def receive_comment(request):
             content = request.POST.get('content')
             user_id = request.session.get('user_id')
             if (article_id):
-                obj=models.Comment.objects.create(content=content, user_id=user_id, reply_id=reply_id, article_id=article_id)
+                models.Comment.objects.create(content=content, user_id=user_id, reply_id=reply_id, article_id=article_id)
                 models.Article.objects.filter(id=article_id).update(comment=F('comment') + 1)
+                return redirect('/blog/'+article_id+'.html#pagerModel')
             else:
                 obj=models.Message.objects.create(content=content, user_id=user_id, reply_id=reply_id)
             id=obj.id
             create_time = obj.create_time.strftime('%Y-%m-%d %H:%M:%S')
             nickname=obj.user.nickname
-            reply_nickname=obj.reply.user.nickname
-            result={'id':id, 'nickname':nickname,'create_time':create_time,'reply_nickname':reply_nickname}
+            if obj.reply:
+                reply_nickname=obj.reply.user.nickname
+                result={'id':id, 'nickname':nickname,'create_time':create_time,'reply_nickname':reply_nickname}
+            else:
+                result={'id':id, 'nickname':nickname,'create_time':create_time,}
         except Exception as e:
-            print(str(e))
             return HttpResponse(json.dumps(str(e)))
         return HttpResponse(json.dumps(result))
     else:

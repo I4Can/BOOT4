@@ -215,7 +215,7 @@ $('[data-toggle="tooltip"]').tooltip();
                     data:{'article_id':$(this).parent().attr('id'),'path':$('#path').val()},
                     dataType:'json',
                     success:function(arg){
-                        tag.text(arg.like);
+                        tag.text(' '+arg.like);
                     }
                     })
                 }
@@ -265,8 +265,6 @@ $('[data-toggle="tooltip"]').tooltip();
                     tag=$(this).parents('.main-comment').children('.row').children('.container').children('.row-align-center');
                     var content=$('#reply_content').val();
                     if(content){
-
-
                         $.ajax({
                             url:'/receive_comment/',
                             headers: {"X-CSRFToken":$.cookie("csrftoken")},
