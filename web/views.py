@@ -191,8 +191,8 @@ def receive_comment(request):
             reply_id = request.POST.get('reply_id')
             content = request.POST.get('content')
             user_id = request.session.get('user_id')
-            reply_id = reply_id.split('_')[1]
             if reply_id and article_id:
+                reply_id = reply_id.split('_')[1]
                 obj=models.Comment.objects.create(content=content, user_id=user_id, reply_id=reply_id,
                                               article_id=article_id)
                 models.Article.objects.filter(id=article_id).update(comment=F('comment') + 1)
@@ -202,9 +202,12 @@ def receive_comment(request):
                 models.Article.objects.filter(id=article_id).update(comment=F('comment') + 1)
                 return redirect('/blog/' + article_id + '.html#pagerModel')
             else:
-                obj = models.Message.objects.create(content=content, user_id=user_id, reply_id=reply_id)
-                if not obj.reply:
+                if reply_id:
+                    reply_id = reply_id.split('_')[1]
+                else:
+                    models.Message.objects.create(content=content, user_id=user_id)
                     return redirect('/message/#pagerModel')
+                obj = models.Message.objects.create(content=content, user_id=user_id, reply_id=reply_id)
             id = obj.id
             create_time = obj.create_time.strftime('%Y-%m-%d %H:%M:%S')
             nickname = obj.user.nickname
