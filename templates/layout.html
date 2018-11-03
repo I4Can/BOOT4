@@ -272,7 +272,7 @@ $('[data-toggle="tooltip"]').tooltip();
                             data:$('#reply_form').serialize(),
                             dataType:'json',
                             success:function(data){
-                                tag.append($('.reply_template').removeClass('d-none'));
+                                tag.append($('.reply_template').clone().removeClass('d-none'));
                                 var new_reply=tag.children('.reply_template');
                                 new_reply.children('.text-primary').text(data.nickname);
                                 new_reply.children('.text-secondary').text(data.reply_nickname);
@@ -281,6 +281,7 @@ $('[data-toggle="tooltip"]').tooltip();
                                 new_reply.attr('id',"comment_"+data.id);
                                 $('#reply-form').addClass('d-none');
                                 $('#reply_content').val('');
+                                new_reply.removeClass('reply_template');
                             }
                         })
                     }
