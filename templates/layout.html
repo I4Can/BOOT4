@@ -256,11 +256,10 @@ $('[data-toggle="tooltip"]').tooltip();
             })
             msgCheckStatus(status);
             cLike(status);
-
        }
 
         function msgCheckStatus(status){
-            $('#send_reply').click(function(){
+            $('#send_reply,.sendReply').click(function(){
                 if(status){
                     tag=$(this).parents('.main-comment').children('.row').children('.container').children('.row-align-center');
                     var content=$('#reply_content').val();

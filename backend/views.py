@@ -44,8 +44,8 @@ def delArticle(request):
         if request.method == 'POST':
             try:
                 ids = request.POST.get('id').split('/')[:-1]
+                ret['ids']=ids
                 table=request.POST.get('type')
-                print(table,555)
                 for id in ids:
                     if 'edit_article' in table:
                         models.Comment.objects.filter(id=id).first().delete()

@@ -49,7 +49,7 @@
             <th>操作&nbsp;&nbsp;&nbsp;<i class="fas fa-plus btn"></i></th>
         </tr>
         {% for item in article_info.comments.all %}
-        <tr>
+        <tr id="{{item.id}}">
             <td class="commentId">{{item.id}}</td>
             <td>{{item.user.username}}</td>
             <td>{{item.content}}</td>
@@ -77,7 +77,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary delSub">确认</button>
+                <button type="button" class="btn btn-primary delSub" data-dismiss="modal">确认</button>
             </div>
         </div>
     </div>
@@ -104,7 +104,6 @@
         editor.customConfig.uploadImgHooks = {
             customInsert: function (insertImg, result, editor) {
                     var url =result.data;
-                    console.log(url);
                     insertImg(url);
                 }
         }
@@ -121,11 +120,18 @@
                     url:'/backend/delArticle/',
                     type:'POST',
                     headers: {"X-CSRFToken":$.cookie("csrftoken")},
-                    data:{'id':$('#del_id').val(),'type':document.URL},
+                    data:{'id':$('#del_id').val()+'/','type':document.URL},
                     dataType:'json',
                     success:function(arg){
                         if(arg.status){
-                            location.reload();
+                            for (var i in arg.ids){
+                                $('tr').each(function(){
+                                    if($(this).attr('id')==arg.ids[i]){
+                                        $(this).remove();
+                                    }
+                                })
+                            }
+                            $('#del_id').val('');
                         }
                         else{
                             alert(arg.msg);

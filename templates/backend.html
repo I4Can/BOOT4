@@ -61,7 +61,7 @@ display: -webkit-box;
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary operate-close" data-dismiss="modal">取消</button>
-        <button type="button" class="btn btn-primary delSub">确认</button>
+        <button type="button" class="btn btn-primary delSub" data-dismiss="modal">确认</button>
       </div>
     </div>
   </div>
@@ -112,7 +112,7 @@ display: -webkit-box;
         </tr>
             </form>
         {% for item in article_list%}
-        <tr class="data">
+        <tr class="data" id="{{item.id}}">
             <td scope="row" class="article_id">{{item.id}}</td>
             <td class="article_title">{{item.title}}</td>
             <td style="max-width:400px;" class="d-none d-lg-block article_brief"><p>{{item.brief}}</p></td>
@@ -195,7 +195,14 @@ display: -webkit-box;
                     dataType:'json',
                     success:function(arg){
                         if(arg.status){
-                            location.reload();
+                            for (var i in arg.ids){
+                                $('tr').each(function(){
+                                    if($(this).attr('id')==arg.ids[i]){
+                                        $(this).remove();
+                                    }
+                                })
+                            }
+                            $('#del_id').val('');
                         }
                         else{
                             alert(arg.msg);
