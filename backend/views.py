@@ -71,7 +71,12 @@ def add_article(request):
                 content = request.POST.get('content')
                 category_id = request.POST.get('category_id')
                 brief = request.POST.get('brief')
-                article = models.Article.objects.create(title=title, brief=brief, category_id=category_id)
+                image = re.search(r'<img src="(.*)?"[.*]?>', content)
+                if image:
+                    image=image.group(1).split('"')[0]
+                    article = models.Article.objects.create(title=title, brief=brief, category_id=category_id,illustration=image)
+                else:
+                    article = models.Article.objects.create(title=title, brief=brief, category_id=category_id)
                 models.Article_detail.objects.create(content=content, art=article)
             except Exception as e:
                 ret['status'] = False
@@ -116,7 +121,8 @@ def message(request):
         if request.method=='GET':
             message_list=models.Message.objects.order_by('-id')
             return render(request,"backend_message.html",{'message_list':message_list})
-
+    else:
+        return HttpResponse("404")
 def media(request):
     if request.session.get('user_id') == 1:
         if request.method=='GET':

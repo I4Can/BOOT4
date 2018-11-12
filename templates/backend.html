@@ -19,7 +19,10 @@ display: -webkit-box;
 -webkit-box-orient: vertical;
 }
 
-
+#back_top:hover{
+    cursor:pointer;
+    color:#007bff !important;
+}
 
 
 </style>
@@ -131,6 +134,7 @@ display: -webkit-box;
     </table>
     {% endblock %}
 </div>
+<i id="back_top" class="fas fa-arrow-circle-up text-secondary" style="display:none;position:fixed;bottom:20px;right:20px;font-size:2.0em;"></i>
 <script src="/static/js/jquery-3.3.1.min.js"></script>
 <script src="/static/js/popper.min.js"></script>
 <script src="/static/js/bootstrap.min.js"></script>
@@ -144,6 +148,7 @@ display: -webkit-box;
         deleteInfo();
         sortArticle();
         batch();
+        backTop();
     })
     function batch(){
         $('#batch').click(function(){
@@ -241,6 +246,32 @@ display: -webkit-box;
             <!--render_data();-->
         })
     }
+
+    function backTop(){
+            $(window).scroll(function(){
+                $('#back_top').attr('display','');
+                var vertical=$(window).scrollTop();
+                if(vertical>500){
+                    $('#back_top').fadeIn('slow');
+                }
+                else{
+                    $('#back_top').fadeOut('slow');
+                }
+            })
+            $('#back_top').click(function(){
+                var timer=null;
+                cancelAnimationFrame(timer);
+                timer = requestAnimationFrame(function fn(){
+                    var oTop = document.body.scrollTop || document.documentElement.scrollTop;
+                    if(oTop > 0){
+                        document.body.scrollTop = document.documentElement.scrollTop = oTop - 100;
+                        timer = requestAnimationFrame(fn);
+                    }else{
+                        cancelAnimationFrame(timer);
+                    }
+                })
+            })
+        }
 </script>
 
 </body>

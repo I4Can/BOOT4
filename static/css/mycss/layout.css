@@ -9,6 +9,10 @@
       .tooltip-inner{
         padding:0;
       }
+      #back_top:hover{
+        cursor:pointer;
+        color:#007bff !important;
+      }
       i{
       color:gray;
       font-size:45px;
