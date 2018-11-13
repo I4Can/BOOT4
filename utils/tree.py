@@ -1,9 +1,5 @@
 
 def preorder(root):
-    """
-    :type root: Node
-    :rtype: List[int]
-    """
     if not root:
         return []
     if not root.answer.first():

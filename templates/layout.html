@@ -193,6 +193,7 @@ $('[data-toggle="tooltip"]').tooltip();
             manage();
             backTop();
        })
+
         function about (){
             $('.about').click(function(){
                 location.href='/about#pagerModal';
@@ -284,6 +285,7 @@ $('[data-toggle="tooltip"]').tooltip();
                                 $('#reply-form').addClass('d-none');
                                 $('#reply_content').val('');
                                 new_reply.removeClass('reply_template');
+                                reply();
                             }
                         })
                     }

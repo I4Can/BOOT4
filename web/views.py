@@ -191,6 +191,7 @@ def receive_comment(request):
             reply_id = request.POST.get('reply_id')
             content = request.POST.get('content')
             user_id = request.session.get('user_id')
+            path=request.POST.get('path')
             if reply_id and article_id:
                 reply_id = reply_id.split('_')[1]
                 obj=models.Comment.objects.create(content=content, user_id=user_id, reply_id=reply_id,
@@ -200,7 +201,10 @@ def receive_comment(request):
                 models.Comment.objects.create(content=content, user_id=user_id,
                                               article_id=article_id)
                 models.Article.objects.filter(id=article_id).update(comment=F('comment') + 1)
-                return redirect('/blog/' + article_id + '.html#pagerModel')
+                if path=='edit':
+                    return HttpResponse("OK")
+                else:
+                    return redirect('/blog/' + article_id + '.html#pagerModel')
             else:
                 if reply_id:
                     reply_id = reply_id.split('_')[1]

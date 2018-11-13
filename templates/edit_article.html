@@ -40,30 +40,79 @@
     </table>
 </div>
 <div>
+    {% for item in comment_tree %}
+
     <table class="table table-hover table-light">
-        <tr>
+
+        <thead class="thead-dark">
             <th>ID</th>
             <th>评论的人</th>
             <th>评论内容</th>
             <th>评论时间</th>
-            <th>操作&nbsp;&nbsp;&nbsp;<i class="fas fa-plus btn"></i></th>
-        </tr>
-        {% for item in article_info.comments.all %}
-        <tr id="{{item.id}}">
-            <td class="commentId">{{item.id}}</td>
-            <td>{{item.user.username}}</td>
-            <td>{{item.content}}</td>
-            <td>{{item.create_time}}</td>
-            <td>
-                <i class="fas fa-eraser btn btn-del" data-toggle="modal" data-target="#delModal"></i>&nbsp;
-                <a class="fas fa-comment-dots disabled"></a>
-            </td>
-        </tr>
+            <th>操作&nbsp;&nbsp;&nbsp;
+                <i data-toggle="modal" data-target="#reply_modal" class="fas fa-plus btn"></i></th>
+        </thead>
+            {% for comment in item %}
+                {% if comment.reply %}
+                    <tr id="{{comment.id}}">
+                        <td class="commentId">{{comment.id}}</td>
+                        <td>{{comment.user.username}}</td>
+                        <td>{{comment.content}}</td>
+                        <td>{{comment.create_time}}</td>
+                        <td>
+                            <i class="fas fa-eraser btn btn-del" data-toggle="modal" data-target="#delModal"></i>&nbsp;
+                            <i data-toggle="modal" data-target="#reply_modal" class="fas fa-comment-dots "></i>
+                        </td>
+                    </tr>
+                {% else %}
+                    <thead  class="thead-dark">
+                    <tr id="{{comment.id}}">
+                    <td class="commentId">{{comment.id}}</td>
+                    <td>{{comment.user.username}}</td>
+                    <td>{{comment.content}}</td>
+                    <td>{{comment.create_time}}</td>
+                    <td>
+                        <i class="fas fa-eraser btn btn-del" data-toggle="modal" data-target="#delModal"></i>&nbsp;
+                        <i data-toggle="modal" data-target="#reply_modal" class="fas fa-comment-dots "></i>
+                    </td>
+                    </tr>
+                    </thead>
+                {% endif %}
+            {% endfor %}
         {% endfor %}
     </table>
 </div>
+<div class="modal fade" id="reply_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="z-index:99999">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle">回复：</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="reply_form">
+          <div class="form-group">
+            <input id="path" type="text" class="d-none" value="edit" name="path">
+            <input id="reply_id" type="text" class="" name="reply_id">
+            <input id="article_id" type="text" class="" name="article_id" value="{{article_info.id}}">
+          </div>
+          <div class="form-group">
+            <label for="message-text" class="col-form-label">Message:</label>
+            <textarea class="form-control" id="message-text" name="content"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+        <button id="reply_sub" type="button" class="btn btn-primary">回复</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="modal fade" id="delModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-     aria-hidden="true">
+     aria-hidden="true" style="z-index:99999">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -82,7 +131,7 @@
         </div>
     </div>
 </div>
-<p><a class="btn btn-dark float-right" style="position:relative; right:20px;" href="/backend/" >返回</a></p>
+<p><a class="btn btn-dark float-right" style="position:relative; right:20px;" href="/backend/">返回</a></p>
 </body>
 <script src="/static/js/jquery-3.3.1.min.js"></script>
 <script src="/static/js/wangEditor.min.js"></script>
@@ -110,7 +159,27 @@
         editor.create();
         edit_article(editor);
         deleteInfo();
+        reply();
         })
+        function reply(){
+           $('.fa-comment-dots').click(function(){
+                $('#reply_id').val('_'+$(this).parents('tr').attr('id'));
+           })
+           $('#reply_sub').click(function(){
+                if($('#message-text').val()){
+                    $.ajax({
+                        url:'/receive_comment/',
+                        headers: {"X-CSRFToken":$.cookie("csrftoken")},
+                        type:'POST',
+                        data:$('#reply_form').serialize(),
+                        success:function(data){
+                            location.reload();
+                        }
+                    })
+                }
+           })
+
+       }
     function deleteInfo(){
         $('.btn-del').click(function(){
             $('#del_id').val($(this).parent().prevAll('.commentId').text());
@@ -124,14 +193,7 @@
                     dataType:'json',
                     success:function(arg){
                         if(arg.status){
-                            for (var i in arg.ids){
-                                $('tr').each(function(){
-                                    if($(this).attr('id')==arg.ids[i]){
-                                        $(this).remove();
-                                    }
-                                })
-                            }
-                            $('#del_id').val('');
+                            location.reload();
                         }
                         else{
                             alert(arg.msg);
@@ -159,6 +221,7 @@
         })
         }, false)
         }
+
 
 
 

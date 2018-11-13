@@ -4,6 +4,7 @@ import json
 import re
 import os
 from MyBlog import settings
+from utils import tree
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 def backend(request):
@@ -90,10 +91,15 @@ def edit_article(request):
             id = request.GET.get('id')
             category_id = request.GET.get('cid')
             article_info = models.Article.objects.filter(id=id, category_id=category_id).first()
+            comment = models.Comment.objects.filter(article_id=id).filter(reply=None).order_by('-id')
+            comments_Tree = []
+            for item in comment:
+                single_tree = tree.preorder(root=item)
+                comments_Tree.append(single_tree)
             category = models.Category.objects.all()
             like_user=models.UserArticle.objects.filter(article_id=id).all()
             if (article_info):
-                return render(request, 'edit_article.html', {'article_info': article_info, 'category': category,'like_user':like_user})
+                return render(request, 'edit_article.html', {'article_info': article_info, 'category': category,'like_user':like_user,'comment_tree':comments_Tree})
             else:
                 return HttpResponse("别乱搞")
         else:

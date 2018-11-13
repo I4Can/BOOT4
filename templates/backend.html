@@ -25,14 +25,15 @@ display: -webkit-box;
 }
 
 
+
 </style>
 <body>
 <nav class="navbar navbar-expand-md navbar-light bg-light">
     <a class="navbar-brand" href="/">肖浪哥</a>
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
     <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
             <li class="nav-item active">
@@ -44,55 +45,58 @@ display: -webkit-box;
 
         </ul>
         <button id="batch" type="button" class="btn btn-secondary btn-sm">批量操作</button>
-        <button id="batch_confirm" type="button" data-toggle="modal" data-target="#delModal" class="btn btn-danger btn-sm d-none" disabled>确定</button>
+        <button id="batch_confirm" type="button" data-toggle="modal" data-target="#delModal"
+                class="btn btn-danger btn-sm d-none" disabled>确定
+        </button>
         <a href="/backend/add_article/" class="fas fa-plus btn float-right text-dark"></a>
     </div>
 </nav>
 
 <div>
-    <div class="modal fade" id="delModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close operate-close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body text-center">
-        确认删除？
-        <input type="text" id="del_id" class="d-none">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary operate-close" data-dismiss="modal">取消</button>
-        <button type="button" class="btn btn-primary delSub" data-dismiss="modal">确认</button>
-      </div>
+    <div class="modal fade" id="delModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close operate-close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    确认删除？
+                    <input type="text" id="del_id" class="d-none">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary operate-close" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary delSub" data-dismiss="modal">确认</button>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
     {% block html %}
-        <table class="table table-hover table-light">
+    <table class="table table-hover table-light">
         <form id="sort_form" action="/backend/sort_article/" method="POST">
             {% csrf_token %}
             <input name="sort" id="sort" type="text" class="d-none" value="{{sort}}">
             <input name="sort-way" id="sort-way" type="text" class="d-none" value="{{sort_way}}">
-        <tr>
-            <th scope="col">ID</th>
-            <th scope="col">标题</th>
-            <th scope="col" class="d-none d-lg-block" id="brief_header">梗概</th>
-            <th scope="col" id="browse-sort">浏览&nbsp;
-                <i class="fas fa-sort-up d-none text-danger"></i>
-                <i style="position:relative;" class="fas fa-sort-down d-none text-danger"></i></th>
-            <th scope="col" id="like-sort">点赞&nbsp;
-                <i class="fas fa-sort-up d-none text-danger"></i>
-                <i style="position:relative;" class="fas fa-sort-down d-none text-danger"></i>
-      </th>
-            <th scope="col" id="comment-sort">评论&nbsp;
-               <i class="fas fa-sort-up d-none text-danger"></i>
-                <i class="fas fa-sort-down d-none text-danger"></i></th>
-            <th scope="col" id="create_time-sort">时间&nbsp;
-                <i class="fas fa-sort-up d-none text-danger"></i>
-                <i  class="fas fa-sort-down d-none text-danger"></i></th>
-            <th scope="col" id="category_sort">
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">标题</th>
+                <th scope="col" class="d-none d-lg-block" id="brief_header">梗概</th>
+                <th scope="col" id="browse-sort">浏览&nbsp;
+                    <i class="fas fa-sort-up d-none text-danger"></i>
+                    <i style="position:relative;" class="fas fa-sort-down d-none text-danger"></i></th>
+                <th scope="col" id="like-sort">点赞&nbsp;
+                    <i class="fas fa-sort-up d-none text-danger"></i>
+                    <i style="position:relative;" class="fas fa-sort-down d-none text-danger"></i>
+                </th>
+                <th scope="col" id="comment-sort">评论&nbsp;
+                    <i class="fas fa-sort-up d-none text-danger"></i>
+                    <i class="fas fa-sort-down d-none text-danger"></i></th>
+                <th scope="col" id="create_time-sort">时间&nbsp;
+                    <i class="fas fa-sort-up d-none text-danger"></i>
+                    <i class="fas fa-sort-down d-none text-danger"></i></th>
+                <th scope="col" id="category_sort">
                     <select name="category_id" class="bg-light border-light">
                         {% if category_id == 0 %}
                         <option value="0" selected>所有分类</option>
@@ -108,12 +112,12 @@ display: -webkit-box;
                         {% endfor %}
                     </select>
 
-            </th>
-            <th scope="col">
-                操作
-            </th>
-        </tr>
-            </form>
+                </th>
+                <th scope="col">
+                    操作
+                </th>
+            </tr>
+        </form>
         {% for item in article_list%}
         <tr class="data" id="{{item.id}}">
             <td scope="row" class="article_id">{{item.id}}</td>
@@ -134,7 +138,9 @@ display: -webkit-box;
     </table>
     {% endblock %}
 </div>
-<i id="back_top" class="fas fa-arrow-circle-up text-secondary" style="display:none;position:fixed;bottom:20px;right:20px;font-size:2.0em;"></i>
+
+<i id="back_top" class="fas fa-arrow-circle-up text-secondary"
+   style="display:none;position:fixed;bottom:20px;right:20px;font-size:2.0em;"></i>
 <script src="/static/js/jquery-3.3.1.min.js"></script>
 <script src="/static/js/popper.min.js"></script>
 <script src="/static/js/bootstrap.min.js"></script>
@@ -272,6 +278,7 @@ display: -webkit-box;
                 })
             })
         }
+
 </script>
 
 </body>
