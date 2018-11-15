@@ -2,8 +2,16 @@
 
 {% block css%}
 <style>
+#prev_next span a:hover{
+    cursor:pointer;
+    color:#17a2b8;
+}
 
-
+#prev_next span a{
+     text-decoration:none;
+     out-line: none;
+     color: #343a40;
+}
 
 </style>
 {% endblock %}
@@ -13,6 +21,20 @@
         <h5 class="card-title text-center">{{article_info.title}}</h5>
         <p class="card-text">{{article_info.article_detail.content|safe}}</p>
     </div>
+</div>
+<div id="prev_next" style="width:100%;" class="mb-3">
+    <span style="width:50%;">
+        {% if pre_page %}
+            <a href="/blog/{{pre_page.id}}.html">上一篇：{{pre_page.title}}</a></span>
+        {% else %}
+            <span style="color:#6c757d;">上一篇：没有了。。。</span>
+        {% endif %}
+    <span style="width:50%" class="float-right text-right">
+        {% if next_page %}
+            <a href="/blog/{{next_page.id}}.html">下一篇：{{next_page.title}}</a></span>
+        {% else %}
+            <span style="color:#6c757d;">下一篇：没有了。。。</span></span>
+        {% endif %}
 </div>
 <div class="card  text-center mb-3">
     <div class="card-body">

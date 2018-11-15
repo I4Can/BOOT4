@@ -191,17 +191,17 @@ def receive_comment(request):
             reply_id = request.POST.get('reply_id')
             content = request.POST.get('content')
             user_id = request.session.get('user_id')
-            path=request.POST.get('path')
+            path = request.POST.get('path')
             if reply_id and article_id:
                 reply_id = reply_id.split('_')[1]
-                obj=models.Comment.objects.create(content=content, user_id=user_id, reply_id=reply_id,
-                                              article_id=article_id)
+                obj = models.Comment.objects.create(content=content, user_id=user_id, reply_id=reply_id,
+                                                    article_id=article_id)
                 models.Article.objects.filter(id=article_id).update(comment=F('comment') + 1)
             elif article_id:
                 models.Comment.objects.create(content=content, user_id=user_id,
                                               article_id=article_id)
                 models.Article.objects.filter(id=article_id).update(comment=F('comment') + 1)
-                if path=='edit':
+                if path == 'edit':
                     return HttpResponse("OK")
                 else:
                     return redirect('/blog/' + article_id + '.html#pagerModel')
@@ -235,9 +235,21 @@ def show_article(request, article_id):
             article_info = models.Article.objects.filter(id=article_id).exclude(category_id=2).first()
             if not article_info:
                 return HttpResponse("找不到啦")
-            # nex_article = article_info.get_next_in_order()
-            # pre_article = article_info.get_previous_in_order()
-            # category_id=article_info.category_id
+            category_id = article_info.category_id
+            next_page = None
+            pre_page = None
+            flag = 0
+            items = models.Article.objects.filter(category_id=category_id).order_by('-id')
+            for item in items:
+                next_page = item
+                if flag:
+                    break
+                if item.id == int(article_id):
+                    flag = 1
+                else:
+                    pre_page = item
+            if next_page==article_info:
+                next_page=None
             comment = models.Comment.objects.filter(article_id=article_id).filter(reply=None).order_by('-id')
             comments_Tree = []
             for item in comment:
@@ -256,6 +268,7 @@ def show_article(request, article_id):
             user_id = request.session.get('user_id')
 
             result = {'message_list': message_list, 'page_info': page_info, 'article_info': article_info,
+                      'next_page': next_page, 'pre_page': pre_page,
                       'user_id': user_id, }
             result = visit.visit(request, result)
         except Exception as e:
