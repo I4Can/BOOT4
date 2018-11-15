@@ -13,6 +13,16 @@
      color: #343a40;
 }
 
+
+@media (max-width:576px){
+    #prev_next span{
+         max-width:160px;
+         overflow: hidden;
+        text-overflow:ellipsis;
+        white-space: nowrap;
+    }
+}
+
 </style>
 {% endblock %}
 {% block left %}
@@ -23,18 +33,20 @@
     </div>
 </div>
 <div id="prev_next" style="width:100%;" class="mb-3">
-    <span style="width:50%;">
+    <span style="display:inline-block;">
         {% if pre_page %}
-            <a href="/blog/{{pre_page.id}}.html">上一篇：{{pre_page.title}}</a></span>
+            <a href="/blog/{{pre_page.id}}.html" >上一篇：{{pre_page.title}}</a>
         {% else %}
-            <span style="color:#6c757d;">上一篇：没有了。。。</span>
+            <a style="color:#6c757d;">上一篇：没有了。。。。。</a>
         {% endif %}
-    <span style="width:50%" class="float-right text-right">
+        </span>
+    <span class="float-right text-right" style="display:inline-block;">
         {% if next_page %}
-            <a href="/blog/{{next_page.id}}.html">下一篇：{{next_page.title}}</a></span>
+            <a href="/blog/{{next_page.id}}.html">下一篇：{{next_page.title}}</a>
         {% else %}
-            <span style="color:#6c757d;">下一篇：没有了。。。</span></span>
+            <a style="color:#6c757d;">下一篇：没有了。。。</a>
         {% endif %}
+    </span>
 </div>
 <div class="card  text-center mb-3">
     <div class="card-body">
