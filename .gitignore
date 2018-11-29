@@ -1,3 +1,6 @@
 db.sqlite3
 settings.py
 __pycache__/
+media
+static_collected
+

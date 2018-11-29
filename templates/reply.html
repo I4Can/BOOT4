@@ -129,13 +129,7 @@
             $(this).after($('#reply-form').removeClass('d-none'));
             $('#reply-form').children('form').children('#reply_id').val($(this).attr('id'));
         })
-        $('.content').mousedown(function(){
-            var timeout=null;
-            timeout = setTimeout(function(){
-                $('#del_id').val($(this).prev().val()+'/');
-                $('#delModal').modal('show');
-            }, 1000);
-        });
+        
         $('.content').hover(function(){
             $(this).children('.time').removeClass('d-none');
         },

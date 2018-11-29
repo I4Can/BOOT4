@@ -6,7 +6,7 @@ from django.db.models import Q
 import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-from MyBlog import settings
+
 
 
 # Create your views here.
@@ -23,7 +23,7 @@ def home(request):
         article_list = models.Article.objects.filter(Q(category_id=3)|Q(category_id=1)).order_by('-id')[start: end]
         result = {'article_list': article_list, 'page_info': page_info, }
         result = visit.visit(request, result)
-        return render(request, 'home.html', result)
+        return render(request, 'Home.html', result)
     else:
         return HttpResponse("404")
 

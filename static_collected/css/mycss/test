@@ -1,0 +1,137 @@
+        * {
+         -webkit-border-radius: 0 !important;
+         -moz-border-radius: 0 !important;
+         border-radius: 0 !important;
+         }
+        body{
+        background:#f8f9fa00;
+        }
+      .tooltip-inner{
+        padding:0;
+      }
+
+      i{
+      color:gray;
+      font-size:45px;
+      }
+      i.fa-qq:hover{
+      color:#1E90FF;
+      }
+      i.fa-weixin:hover{
+      color:lightgreen;
+      }
+      i.fa-zhihu:hover{
+      color:#1E90FF;
+      }
+      ul.pagination{
+      justify-content: center;
+      }
+      ul li.nav-item{
+      padding:6px 12px;
+      }
+      .navbar-nav li:hover{
+      background:#e9ecef;
+      }
+      #friendly-link .btn-sm{
+      min-width:70px;
+      font-size:0.8rem;
+      margin:2px;
+      }
+      #archive-log .btn{
+      min-width:110px;
+      }
+      #archive-log .btn{
+      margin:2px;
+      }
+      .art-info i:hover{
+       color:#008B8B;
+       cursor:pointer;
+       }
+        .art-info i{
+            font-size:13px;
+        }
+        .art-info a{
+            color:#212930;
+        }
+                .article a{
+            color:#212930;
+        }
+        .article:hover{
+        border-left:4px solid 	#008B8B;
+        background:#F2F2F2;
+        padding-left:12px;
+        }
+        .article p.card-text a:hover{
+        cursor:pointer;
+        color:	#008B8B;
+        text-decoration:none;
+        }
+        .article h4 a:hover{
+        padding-left:5px;
+        cursor:pointer;
+        color:	#436EEE;
+        text-decoration:none;
+        }
+
+        .fa-power-off:hover{
+            cursor:pointer;
+        }
+        @media (max-width: 2000px) {
+          .article-text {
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 3;
+                overflow: hidden;
+
+          }
+        }
+
+        @media (max-width: 576px){
+            .article-text{
+                padding:0 20px;
+            }
+            .image{
+                margin-top:15px;
+            }
+            .card-title{
+                margin-bottom:5px;
+            }
+        }
+        @media (max-width: 991px){
+            .article-text{
+                font-size:17px;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 3;
+                overflow: hidden;
+            }
+            .card-title{
+                font-size:18px;
+                font-weight:350;
+            }
+            .card-body{
+                padding:10px;
+            }
+        }
+        .card-title{
+            overflow: hidden;
+            text-overflow:ellipsis;
+            white-space: nowrap;
+        }
+
+                .avatar{
+            width:60px;
+            height:60px;
+            margin:10px 10px 0 10px;
+        }
+          ul{
+            list-style:none;
+            padding-left:0;
+          }
+    @media (max-width: 768px) {
+        .avatar{
+            width:45px;
+            height:45px;
+            margin:5px 5px 0 5px;
+        }
+    }

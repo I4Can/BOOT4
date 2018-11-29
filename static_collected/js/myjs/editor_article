@@ -1,0 +1,144 @@
+function deleteInfo(){
+        $('.btn-del').click(function(){
+            $('#del_id').val($(this).parent().prevAll('.commentId').text());
+        })
+        $('.delSub').click(function(){
+            $.ajax({
+                    url:'/backend/delArticle/',
+                    type:'POST',
+                    headers: {"X-CSRFToken":$.cookie("csrftoken")},
+                    data:{'id':$('#del_id').val(),'type':'Comment'},
+                    dataType:'json',
+                    success:function(arg){
+                        if(arg.status){
+                            location.reload();
+                        }
+                        else{
+                            alert(arg.msg);
+                        }
+                    }
+            })
+        })
+    }
+        function edit_article(editor){
+        document.getElementById('edit_article').addEventListener('click', function () {
+        $.ajax({
+            headers:{ "X-CSRFtoken":$.cookie("csrftoken")},
+            url:'/backend/edit_article/',
+            type:'POST',
+            data:{'title':$('#title').val(), 'content':editor.txt.html(),'brief':editor.txt.text().split("&nbsp;").join("").slice(0,252), 'category_id':$('#category_id').val(),'id':{{article_info.id|safe }}},
+            dataType:'json',
+            success:function(arg){
+                if(arg.status){
+                    location.href='/backend/';
+                }
+                else{
+                    alert(arg.msg);
+                }
+            }
+        })
+        }, false)
+        }
+
+        function delMsg(){
+
+        $('.btn-del').click(function(){
+            $('#msg_id').val($(this).parent().prevAll('.article_id').text());
+        })
+        $('.delMsg').click(function(){
+            $.ajax({
+                    url:'/backend/delArticle/',
+                    type:'POST',
+                    headers: {"X-CSRFToken":$.cookie("csrftoken")},
+                    data:{'id':$('#msg_id').val(),'type':'Message'},
+                    dataType:'json',
+                    success:function(arg){
+                        if(arg.status){
+                            location.reload();
+                        }
+                        else{
+                            alert(arg.msg);
+                        }
+                    }
+            })
+        })
+    }
+
+        function deleteInfo(){
+        $('.btn-del').click(function(){
+            $('#del_id').val($(this).parent().prevAll('.article_id').text());
+        })
+        $('.delSub').click(function(){
+            $.ajax({
+                    url:'/backend/delArticle/',
+                    type:'POST',
+                    headers: {"X-CSRFToken":$.cookie("csrftoken")},
+                    data:{'id':$('#del_id').val(),'type':'Article'},
+                    dataType:'json',
+                    success:function(arg){
+                        if(arg.status){
+                            location.reload();
+                        }
+                        else{
+                            alert(arg.msg);
+                        }
+                    }
+            })
+        })
+    }
+    function show_corner(tag){
+            $('#sort').val(tag.attr('id'))
+
+            if(tag.hasClass('active')){
+               tag.children().toggleClass('d-none');
+            }
+            else{
+                tag.children('.fa-sort-up').removeClass('d-none');
+                tag.addClass('active');
+            }
+
+            $('#sort-way').val(tag.children().not('.d-none').attr('class'));
+            $('form').submit();
+    }
+
+    function cornerRender(){
+        if($('#sort-way').val()){
+            $('#{{sort|safe}}').addClass('active');
+            $('#{{sort|safe}}').children('.{{sortWay|safe}}').removeClass('d-none');
+        }
+    }
+
+    function sortArticle(){
+        $('select[name="category_id"]').change(function(){
+            $('#sort_form').submit();
+        })
+
+        $('#brief_header').nextUntil('#category_sort').click(function(){
+            show_corner($(this));
+            <!--render_data();-->
+        })
+    }
+
+
+    function add_article(editor){
+        document.getElementById('add_article').addEventListener('click', function () {
+        if(editor.txt.html()){
+        $.ajax({
+
+            headers:{ "X-CSRFtoken":$.cookie("csrftoken")},
+            url:'/backend/add_article/',
+            type:'POST',
+            data:{'title':$('#title').val(), 'content':editor.txt.html(),'brief':editor.txt.text().split("&nbsp;").join("").slice(0,252), 'category_id':$('#category_id').val()},
+            dataType:'json',
+            success:function(arg){
+                if(arg.status){
+                    location.href='/backend/';
+                }
+                else{
+                    alert(arg.msg);
+                }
+            }
+        })
+        }
+    }, false)
+    }

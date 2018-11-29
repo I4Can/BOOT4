@@ -84,7 +84,7 @@ def recall(request):
                     time_table[year_month.split('-')[0]][year_month.split('-')[1]] = [item]
                 else:
                     time_table[year_month.split('-')[0]][year_month.split('-')[1]].append(item)
-        return render(request, "recall.html", {'recall_list': time_table})
+        return render(request, "Recall.html", {'recall_list': time_table})
     else:
         return HttpResponse("404")
 
@@ -222,7 +222,7 @@ def receive_comment(request):
                 result = {'id': id, 'nickname': nickname, 'create_time': create_time, }
         except Exception as e:
             print(str(e))
-            return HttpResponse(json.dumps(str(e)))
+            return redirect('/')
         return HttpResponse(json.dumps(result))
     else:
         return HttpResponse("404")
