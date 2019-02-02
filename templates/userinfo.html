@@ -89,6 +89,7 @@
                 }
         })
         $('#avatar-select').change(function(){
+
             var file = document.getElementById("avatar-select").files[0];
             var reader = new FileReader();
             reader.readAsDataURL(file);

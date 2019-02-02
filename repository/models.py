@@ -19,6 +19,7 @@ class Article(models.Model):
     title=models.CharField(verbose_name="标题",max_length=64)
     brief=models.CharField(verbose_name="简要",max_length=254)
     illustration=models.ImageField(verbose_name="插图",upload_to='illustration')
+    video=models.FileField(verbose_name="视频",upload_to='videos',blank=True,null=True,default='')
     browse=models.IntegerField(default=0)
     like=models.IntegerField(default=0)
     comment=models.IntegerField(default=0)

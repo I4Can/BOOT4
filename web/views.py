@@ -287,3 +287,8 @@ def status(request):
     else:
         request.session.flush()
         return HttpResponse('OK')
+
+def modern_history(request):
+    if request.method=='GET':
+
+        return render(request,'modern_history.html',request)

@@ -12,6 +12,11 @@
     {{article_info.article_detail.content|safe}}
 </div>
 <div class="d-flex justify-content-center">
+    <form id="video_form">
+        <label id="add_video" for="video_file" class="btn btn-primary btn-block" style="max-width:25em;margin-top:20px;">添加视频</label>
+        <input name="file_type" class="d-none" value="video">
+        <input id="video_file" name="video_file" type="file" class= "d-none" accept="video/*">
+    </form>
     <button id="edit_article" type="button" class="btn btn-primary btn-lg btn-block"
             style="max-width:25em;margin-top:20px;">提交
     </button>
@@ -141,25 +146,26 @@
 <script>
         $(function(){
 
-        //初始化编辑器
-        var E = window.wangEditor;
-        var editor = new E('#content');
+            //初始化编辑器
+            var E = window.wangEditor;
+            var editor = new E('#content');
 
-        editor.customConfig.uploadImgHeaders = {
-            "X-CSRFToken":$.cookie("csrftoken")
-        }
-        editor.customConfig.uploadImgServer = '/backend/media/'
-        editor.customConfig.debug = location.href.indexOf('wangeditor_debug_mode=1') > 0
-        editor.customConfig.uploadImgHooks = {
-            customInsert: function (insertImg, result, editor) {
-                    var url =result.data;
-                    insertImg(url);
-                }
-        }
-        editor.create();
-        edit_article(editor);
-        deleteInfo();
-        reply();
+            editor.customConfig.uploadImgHeaders = {
+                "X-CSRFToken":$.cookie("csrftoken")
+            }
+            editor.customConfig.uploadImgServer = '/backend/media/'
+            editor.customConfig.debug = location.href.indexOf('wangeditor_debug_mode=1') > 0
+            editor.customConfig.uploadImgHooks = {
+                customInsert: function (insertImg, result, editor) {
+                        var url =result.data;
+                        insertImg(url);
+                    }
+            }
+            editor.create();
+            edit_article(editor);
+            deleteInfo();
+            reply();
+            add_video(editor);
         })
         function reply(){
            $('.fa-comment-dots').click(function(){
@@ -178,8 +184,39 @@
                     })
                 }
            })
-
        }
+
+       function add_video(editor){
+        $('#video_file').change(function(){
+            ths=$(this);
+
+            var formdata=new FormData(document.getElementById('video_form'));
+            $.ajax({
+                headers:{ "X-CSRFtoken":$.cookie("csrftoken")},
+                url:'/backend/media/',
+                type:'POST',
+                processData:false,
+                data: formdata,
+                dataType:'json',
+                contentType:false,
+                success:function(data){
+                    if(data.errno==0){
+                        console.log(data);
+                        var text=editor.txt.html();
+                        for(i=0;i<data.data.length;i++){
+                            text+='<video src="' + data.data[i] + '" width="320" height="240" controls="controls"> </video><p></p>'
+                        }
+                        editor.txt.html(text);
+                        ths.val('');
+                    }
+                    else{
+                        alert("上传失败");
+                    }
+                }
+            })
+        })
+    }
+
     function deleteInfo(){
         $('.btn-del').click(function(){
             $('#del_id').val($(this).parent().prevAll('.commentId').text());
@@ -204,21 +241,21 @@
     }
         function edit_article(editor){
         document.getElementById('edit_article').addEventListener('click', function () {
-        $.ajax({
-            headers:{ "X-CSRFtoken":$.cookie("csrftoken")},
-            url:'/backend/edit_article/',
-            type:'POST',
-            data:{'title':$('#title').val(), 'content':editor.txt.html(),'brief':editor.txt.text().split("&nbsp;").join("").slice(0,252), 'category_id':$('#category_id').val(),'id':{{article_info.id|safe }}},
-            dataType:'json',
-            success:function(arg){
-                if(arg.status){
-                    location.href='/backend/';
+            $.ajax({
+                headers:{ "X-CSRFtoken":$.cookie("csrftoken")},
+                url:'/backend/edit_article/',
+                type:'POST',
+                data:{'title':$('#title').val(), 'content':editor.txt.html(),'brief':editor.txt.text().split("&nbsp;").join("").slice(0,252), 'category_id':$('#category_id').val(),'id':{{article_info.id|safe }}},
+                dataType:'json',
+                success:function(arg){
+                    if(arg.status){
+                        location.href='/backend/';
+                    }
+                    else{
+                        alert(arg.msg);
+                    }
                 }
-                else{
-                    alert(arg.msg);
-                }
-            }
-        })
+            })
         }, false)
         }
 </script>
